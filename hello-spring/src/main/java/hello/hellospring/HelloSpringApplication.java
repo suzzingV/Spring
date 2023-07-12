@@ -1,4 +1,4 @@
-package hello.hellospring;
+package hello.hellospring; //이 하위 패키지에 있는 것들은 스프링 빈으로 등록 가능
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
