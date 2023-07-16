@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -20,7 +22,6 @@ class MemberServiceIntegrationTest {
     @Autowired MemberService memberService;
 
     @Test
-    @Commit
         //끝나면 커밋
     void 회원가입() {
         //given
