@@ -2,6 +2,7 @@ package hello.core.web;
 
 import hello.core.common.MyLogger;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,14 +15,15 @@ import javax.servlet.http.HttpServletRequest;
 public class LogDemoControlller {
 
     private final LogDemoService logDemoService;
-    private final MyLogger myLogger;
+    private final ObjectProvider<MyLogger> myLoggerProvider;
 
     @RequestMapping("log-demo") //log-demo라는 요청 오면 함
     @ResponseBody //화면 없이 문자 반환하고 싶음
-    public String logDemo(HttpServletRequest request) {
+    public String logDemo(HttpServletRequest request) throws InterruptedException{
         String requestURL = request.getRequestURI().toString();
+        MyLogger myLogger = myLoggerProvider.getObject();
         myLogger.setRequestURL(requestURL);
-
+        Thread.sleep(3000);
         myLogger.log("controller test");
         logDemoService.logic("testId");
         return "OK";
