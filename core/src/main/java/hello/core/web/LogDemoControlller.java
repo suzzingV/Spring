@@ -15,14 +15,16 @@ import javax.servlet.http.HttpServletRequest;
 public class LogDemoControlller {
 
     private final LogDemoService logDemoService;
-    private final ObjectProvider<MyLogger> myLoggerProvider;
+    private final MyLogger myLogger;
 
     @RequestMapping("log-demo") //log-demo라는 요청 오면 함
     @ResponseBody //화면 없이 문자 반환하고 싶음
     public String logDemo(HttpServletRequest request) throws InterruptedException{
         String requestURL = request.getRequestURI().toString();
-        MyLogger myLogger = myLoggerProvider.getObject();
+
+        System.out.println("myLogger = " + myLogger.getClass());
         myLogger.setRequestURL(requestURL);
+
         Thread.sleep(3000);
         myLogger.log("controller test");
         logDemoService.logic("testId");
