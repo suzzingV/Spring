@@ -19,34 +19,35 @@ import java.sql.SQLException;
 @Slf4j
 @RequiredArgsConstructor //의존성 주입의 방법 중 생성자 주입을 임의의 코드 없이 자동으로 설정
 
-public class MemberServiceV2 {
+public class MemberServiceV3_1 {
 
-    private final DataSource dataSource;
-    private final MemberRepositoryV2 memberRepository;
+//    private final DataSource dataSource;
+    private final PlatformTransactionManager transactionManager;
+    private final MemberRepositoryV3 memberRepository;
 
     public void accountTransfer(String fromId, String toId, int money) throws SQLException {
 
-        Connection con = dataSource.getConnection();
+        //트랜잭션 시작
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+
         try {
-            con.setAutoCommit(false);
             //비즈니스 로직
-            bisLogic(con, fromId, toId, money);
-            con.commit(); //성공 시 커밋
+            bisLogic(fromId, toId, money);
+            transactionManager.commit(status); //성공 시 커밋
         } catch (Exception e){
-            con.rollback(); //실패 시 롤백
+            transactionManager.rollback(status); //실패 시 롤백
             throw new IllegalStateException(e);
-        } finally {
-            release(con);
         }
     }
 
-    private void bisLogic(Connection con, String fromId, String toId, int money) throws SQLException {
-        Member fromMember = memberRepository.findById(con, fromId);
-        Member toMember = memberRepository.findById(con, toId);
+    private void bisLogic(String fromId, String toId, int money) throws SQLException {
+        Member fromMember = memberRepository.findById(fromId);
+        Member toMember = memberRepository.findById(toId);
 
-        memberRepository.update(con, fromId, fromMember.getMoney() - money);
+        memberRepository.update(fromId, fromMember.getMoney() - money);
         validation(toMember);
-        memberRepository.update(con, toId, toMember.getMoney() + money);
+        memberRepository.update(toId, toMember.getMoney() + money);
     }
 
     private static void release(Connection con) {
