@@ -25,7 +25,7 @@ public class MemberServiceV3_1 {
     private final PlatformTransactionManager transactionManager;
     private final MemberRepositoryV3 memberRepository;
 
-    public void accountTransfer(String fromId, String toId, int money) throws SQLException {
+    public void accountTransfer(String fromId, String toId, int money){
 
         //트랜잭션 시작
         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -48,17 +48,6 @@ public class MemberServiceV3_1 {
         memberRepository.update(fromId, fromMember.getMoney() - money);
         validation(toMember);
         memberRepository.update(toId, toMember.getMoney() + money);
-    }
-
-    private static void release(Connection con) {
-        if (con != null) {
-            try {
-                con.setAutoCommit(true); //커넥션 풀 고려
-                con.close();
-            }catch (Exception e) {
-                log.info("error", e);
-            }
-        }
     }
 
     private static void validation(Member toMember) {
